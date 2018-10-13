@@ -6,7 +6,7 @@
 </head>
 <body>
     <div><h1>Edit Post</h1></div>
-    <form>
+    <form action="post" method="POST">
         <div>
             <button type="submit">Save</button>
             <button type="submit">Close</button>
@@ -15,11 +15,11 @@
         </div>
         <div>
             <label for="title">Title</label>
-            <input type="text" id="text">
+            <input name="title" type="text" id="text">
         </div>
         <div>
             <label for="body">Body</label>
-            <textarea style="height: 20rem;" id="body"></textarea>
+            <textarea name="body" style="height: 20rem;" id="body"></textarea>
         </div>
     </form>
 </body>
