@@ -5,13 +5,14 @@
     <title>Edit Post</title>
 </head>
 <body>
+    <%= request.getAttribute("title") %> ! <br>
     <div><h1>Edit Post</h1></div>
     <form action="post" method="POST">
         <div>
-            <button type="submit">Save</button>
-            <button type="submit">Close</button>
-            <button type="submit">Preview</button>
-            <button type="submit">Delete</button>
+            <button name="action" type="submit" value="save">Save</button>
+            <button name="action" type="submit" value="list">Close</button>
+            <button name="action" type="submit" value="preview">Preview</button>
+            <button name="action" type="submit" value="delete">Delete</button>
         </div>
         <div>
             <label for="title">Title</label>

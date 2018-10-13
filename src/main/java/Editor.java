@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.BufferedReader;
 import java.sql.* ;
 import java.util.List;
 import java.util.ArrayList;
@@ -20,10 +21,6 @@ import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
-/**
- * Servlet implementation class for Servlet: ConfigurationTest
- *
- */
 public class Editor extends HttpServlet {
     public Editor() {}
 
@@ -68,49 +65,50 @@ public class Editor extends HttpServlet {
         throws ServletException, IOException 
     {
 	// Parse query string
-        String queryString = request.getQueryString();
-
-        if(queryString == null)
+        StringBuilder buffer = new StringBuilder();
+        BufferedReader reader = request.getReader();
+        String line;
+        while((line = reader.readLine()) != null)
         {
-            System.out.println("No query string found");
-            return;
+            buffer.append(line);
         }
+        String queryString = buffer.toString();
 
         Map<String, String> queryPairs = splitQuery(queryString);
         String action = queryPairs.get("action");
-
+        System.out.println(action);
         switch(action)
         {
             case "open":
             {
                 String username = queryPairs.get("username");
                 int postId = Integer.parseInt(queryPairs.get("postid"));
+                request.setAttribute("title", "Open");
                 break;
             }      
             case "save":
             {
-                System.out.println("Save detected");
+                request.setAttribute("title", "Open");
                 break;
             }
             case "delete":
             {
-                System.out.println("Delete");
+                request.setAttribute("title", "Delete");
                 break;
             }
             case "preview":
             {
-                System.out.println("Preview");
+                request.setAttribute("title", "Preview");
                 break;
             }
             case "list":
             {
-                System.out.println("List");
+                request.setAttribute("title", "List");
                 break;
             }
             default:
             {
                 System.out.println("Action not recognized");
-                return;
             }
         }
 
