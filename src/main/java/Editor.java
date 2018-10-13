@@ -3,6 +3,9 @@ import java.sql.* ;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.lang.*;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -37,8 +40,6 @@ public class Editor extends HttpServlet {
     /**
      * Handles HTTP GET requests
      * 
-     * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest request,
-     *      HttpServletResponse response)
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException 
@@ -48,6 +49,17 @@ public class Editor extends HttpServlet {
         request.getRequestDispatcher("/edit.jsp").forward(request, response);
     }
     
+    public static Map<String, String> splitQuery(String queryString)
+    {
+        Map<String, String> queryPairs = new LinkedHashMap<String, String>();
+        String[] pairs = queryString.split("&");
+        for(String pair : pairs)
+        {
+            int index = pair.indexOf("=");
+            queryPairs.put(pair.substring(0, index), pair.substring(index+1));
+        }
+        return queryPairs;
+    }
     /**
      * Handles HTTP POST requests
      * 
@@ -56,31 +68,44 @@ public class Editor extends HttpServlet {
         throws ServletException, IOException 
     {
 	// Parse query string
-        String action = request.getAttribute("action");
-        if(action == null)
+        String queryString = request.getQueryString();
+
+        if(queryString == null)
         {
-            System.out.println("action attribute not found");
+            System.out.println("No query string found");
             return;
         }
+
+        Map<String, String> queryPairs = splitQuery(queryString);
+        String action = queryPairs.get("action");
 
         switch(action)
         {
             case "open":
             {
-                String username = request.getAttribute("username");
-                int postId = Integer.parseInt(request.getAttribute("postid"));
+                String username = queryPairs.get("username");
+                int postId = Integer.parseInt(queryPairs.get("postid"));
+                break;
             }      
             case "save":
             {
+                System.out.println("Save detected");
+                break;
             }
             case "delete":
             {
+                System.out.println("Delete");
+                break;
             }
             case "preview":
             {
+                System.out.println("Preview");
+                break;
             }
             case "list":
             {
+                System.out.println("List");
+                break;
             }
             default:
             {
