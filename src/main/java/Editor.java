@@ -59,13 +59,10 @@ public class Editor extends HttpServlet {
         }
         return queryPairs;
     }
-    /**
-     * Handles HTTP POST requests
-     * 
-     */
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException 
-    {
+
+    public static String getQueryString(HttpServletRequest request)
+        throws IOException
+    { 
 	// Parse query string
         StringBuilder buffer = new StringBuilder();
         BufferedReader reader = request.getReader();
@@ -74,11 +71,20 @@ public class Editor extends HttpServlet {
         {
             buffer.append(line);
         }
-        String queryString = buffer.toString();
+        return buffer.toString();
+    }
+    /**
+     * Handles HTTP POST requests
+     * 
+     */
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException 
+    {
+        String queryString = getQueryString(request);
 
         Map<String, String> queryPairs = splitQuery(queryString);
         String action = queryPairs.get("action");
-        System.out.println(action);
+        
         switch(action)
         {
             case "open":
@@ -91,10 +97,13 @@ public class Editor extends HttpServlet {
             case "save":
             {
                 request.setAttribute("title", "Save");
-                String username = queryPairs.get("username");
+
                 int postId = Integer.parseInt(queryPairs.get("postid"));
+                String username = queryPairs.get("username");
                 String title = queryPairs.get("title");
-                PostService.addPost(username, title, postId);
+                String body = queryPairs.get("body");
+
+                PostService.addPost(postId, username, title, body);
 
                 break;
             }

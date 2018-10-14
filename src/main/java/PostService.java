@@ -10,74 +10,57 @@ public class PostService
     static final String DB_URL = "jdbc:mysql://localhost:3306/CS144";
     
     // DB Credentials
-    static final String username = "cs144";
-    static final String password = "";   
+    static final String dbUsername = "cs144";
+    static final String dbPassword = "";   
     
     public static Connection getConnection()
     {
         Connection conn = null;
+        
         /* load the driver */
         try
         {
-            Class.forName("JDBC_DRIVER");
-        }
-        catch (ClassNotFoundException ex)
-        {
-            System.out.println(ex);
-            return null;
-        }
-        
-        /* create an instance of a Connection object */
-        try
-        {
-            conn = DriverManager.getConnection(DB_URL, username, password);
-            return conn;
+            Class.forName(JDBC_DRIVER);
+            
+            /* create an instance of a Connection object */
+            conn = DriverManager.getConnection(DB_URL, dbUsername, dbPassword);
         }
         catch (SQLException ex)
         {
             System.out.println(ex);
-            return null;
-        }
-    }
-        
-    public static void addPost(String user, String title, int postId)
-    {
-        Connection conn = null;
-        try
-        {
-            Class.forName(JDBC_DRIVER);
         }
         catch (ClassNotFoundException ex)
         {
             System.out.println(ex);
         }
+        return conn;
+    }
         
-        /* create an instance of a Connection object */
+    public static void addPost(int postId, String username, String title, String body)
+    {
         try
-        {
-            conn = DriverManager.getConnection(DB_URL, username, password);
-            Statement s = null; 
-            s = conn.createStatement();
-            if(postId <= 0)
-            {
-                String sqlQuery = 
-      "INSERT INTO Posts(username, title, postid, body) VALUES('das', 'ds', 1, 'das')";
-                Post.incrementPostId();
+        {   
+            Connection conn = null;
+            conn = getConnection();
+            PreparedStatement stmt = null; 
 
-                try
-	        {
-		    s.executeUpdate(sqlQuery);
-                    System.out.println("writeJavaObject");
-	        }
-	        catch (SQLException ex)
-	        {
-	            System.out.println(ex);
-	            return;
-	        }
-            }
+            stmt = conn.prepareStatement(
+                "INSERT INTO Posts(postid, username, title, body, created, modified) " +
+                "VALUES(?, ?, ?, ?, NOW(), NOW())");
+
+            stmt.setInt(1, Post.getPostId());
+            stmt.setString(2, username);
+            stmt.setString(3, title);
+            stmt.setString(4, body);
+
+            Post.incrementPostId();
+
+            stmt.executeUpdate();
+            System.out.println("writeJavaObject");
+
             try { conn.close(); } catch (Exception e) {}
-            try { s.close(); } catch (Exception e) {}
-        }
+            try { stmt.close(); } catch (Exception e) {}
+        }       
         catch (SQLException ex)
         {
             System.out.println(ex);
