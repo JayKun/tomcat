@@ -1,24 +1,26 @@
-import java.sql.*
+package project2.model;
+
+import java.sql.*;
 
 public class Post
 {
-    private int postid
+    private static int postId = 0;
     private String username;
     private String title;
     private String body;
-    private TimeStamp modified;
-    private TimStamp created;
+    private Timestamp modified;
+    private Timestamp created;
 
-    public Post(int id, String username, String title, String body)
+    public Post(String username, String title, int id)
     {
         super();
-        this.postid = id;
+        this.postId = id;
         this.username = username;
         this.title = title;
-        this.body = body;
+        this.body = "";
     }
 
-    public int getPostId()
+    public static int getPostId()
     {
         return postId;
     }
@@ -41,5 +43,10 @@ public class Post
     public String getCreated()
     {
         return created.toString();
+    }
+
+    public static void incrementPostId()
+    {
+        postId++;
     }
 }

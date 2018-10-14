@@ -21,6 +21,8 @@ import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
+import project2.service.PostService;
+
 public class Editor extends HttpServlet {
     public Editor() {}
 
@@ -88,7 +90,12 @@ public class Editor extends HttpServlet {
             }      
             case "save":
             {
-                request.setAttribute("title", "Open");
+                request.setAttribute("title", "Save");
+                String username = queryPairs.get("username");
+                int postId = Integer.parseInt(queryPairs.get("postid"));
+                String title = queryPairs.get("title");
+                PostService.addPost(username, title, postId);
+
                 break;
             }
             case "delete":

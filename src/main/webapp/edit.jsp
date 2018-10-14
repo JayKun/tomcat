@@ -22,6 +22,8 @@
             <label for="body">Body</label>
             <textarea name="body" style="height: 20rem;" id="body"></textarea>
         </div>
+            <input name="username" type="hidden" value="jun">
+            <input name="postid" type="hidden" value="-1">
     </form>
 </body>
 </html>
