@@ -85,6 +85,8 @@ public class Editor extends HttpServlet {
         Map<String, String> queryPairs = splitQuery(queryString);
         String action = queryPairs.get("action");
         
+        request.setAttribute("username", queryPairs.get("username"));
+        
         switch(action)
         {
             case "open":
@@ -121,8 +123,9 @@ public class Editor extends HttpServlet {
             {
                 request.setAttribute("title", "List");
                 String username = queryPairs.get("username");
-                ArrayList results = PostService.getPosts(username);   
-                request.setAttribute("results", results);
+                ArrayList posts = PostService.getPosts(username);
+                System.out.println("Size of array is " + posts.size()); 
+                request.setAttribute("posts", posts);
                 request.getRequestDispatcher("/list.jsp").forward(request, response);
                 break;
             }

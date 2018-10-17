@@ -74,19 +74,20 @@ public class PostService
     {
         try
         {   
+            System.out.println("Username is: " + username);
             Connection conn = null;
             conn = getConnection();
             PreparedStatement stmt = null; 
-            String sqlQuery = "SELECT * FROM Posts WHERE username = ? ";
+            String sqlQuery = "SELECT * FROM Posts WHERE username=?";
 
             stmt = conn.prepareStatement(sqlQuery);
 
             stmt.setString(1, username);
 
-            ResultSet rs = stmt.executeQuery(sqlQuery);
+            ResultSet rs = stmt.executeQuery();
             System.out.println("ReadJavaObject");
             
-            ArrayList results = new ArrayList();
+            ArrayList<Post> results = new ArrayList<Post>();
             
             while(rs.next())
             {
@@ -97,6 +98,7 @@ public class PostService
                 Timestamp modified = rs.getTimestamp("modified");             
                 Post post = new Post(postId, username, title, body, created, modified);
                 results.add(post);
+                System.out.println(title);
             }
 
             try { conn.close(); } catch (Exception e) {}

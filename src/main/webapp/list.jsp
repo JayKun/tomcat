@@ -2,28 +2,27 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>List Post</title>
+    <title>Post List</title>
 </head>
 <body>
-    <%= ArrayList<Post> posts = getAttribute("results") %>
     <%= request.getAttribute("title") %> ! <br>
+    <div>
+    <form action="post">
+        <input name="username" value=<%= request.getAttribute("username") %> type="hidden">
+        <input name="postid" value="0" type="hidden">
+        <button type="submit" name="action" value="open">New Post</button>
+    </form>
+    </div>
     <div><h1>Post List</h1></div>
         <table>
         <tbody><tr><th>Title</th><th>Created</th><th>Modified</th><th>&nbsp;</th></tr>
-        <%= for(post in posts) { %>
+        <c:forEach items="${posts}" var="post">
         <tr>
-            <form id=<%= post.getPostId() %> action="post" method="POST"></form> 
-                <input name="username" value=<%= post.getUsername() %> type="hidden">
-                <input name="postid" value=<%= post.getPostId() %> type="hidden">
-                <td></td>
-                <td><%= post.getCreated() %></td>
-                <td><%= post.getModified() %>></td>
-                <td>
-                    <button type="submit" name="action" value="open">Open</button>
-                    <button type="submit" name="action" value="delete">Delete</button>
-                </td>
-        <%= } %>
+        <td><c:out value="${post.getTitle()}"/></td>
+        <td><c:out value="${post.getCreated()}"/></td>
+        <td><c:out value="${post.getModified()}"/></td>
         </tr>
+        </c:forEach>
     </tbody></table>
 </body>
 </html>
