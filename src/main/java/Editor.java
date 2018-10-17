@@ -103,7 +103,7 @@ public class Editor extends HttpServlet {
                 String title = queryPairs.get("title");
                 String body = queryPairs.get("body");
 
-                PostService.addPost(postId, username, title, body);
+                PostService.savePost(postId, username, title, body);
 
                 break;
             }

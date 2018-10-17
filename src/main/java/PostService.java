@@ -37,30 +37,55 @@ public class PostService
         return conn;
     }
         
-    public static void addPost(int postId, String username, String title, String body)
+    public static void savePost(int postId, String username, String title, String body)
     {
         try
         {   
             Connection conn = null;
             conn = getConnection();
             PreparedStatement stmt = null; 
-
             stmt = conn.prepareStatement(
-                "INSERT INTO Posts(postid, username, title, body, created, modified) " +
-                "VALUES(?, ?, ?, ?, NOW(), NOW())");
+                "SELECT * FROM Posts WHERE username=? AND postid=?");
+            
+            stmt.setString(1, username);
+            stmt.setInt(2, postId);           
+            ResultSet rs = stmt.executeQuery();
+           
+            if(!rs.next())
+            {
+                stmt = conn.prepareStatement(
+                    "INSERT INTO Posts(postid, username, title, body, created, modified) " +
+                    "VALUES(?, ?, ?, ?, NOW(), NOW())");
 
-            stmt.setInt(1, Post.getPostId());
-            stmt.setString(2, username);
-            stmt.setString(3, title);
-            stmt.setString(4, body);
+                stmt.setInt(1, Post.getPostId());
+                stmt.setString(2, username);
+                stmt.setString(3, title);
+                stmt.setString(4, body);
 
-            Post.incrementPostId();
+                Post.incrementPostId();
 
-            stmt.executeUpdate();
-            System.out.println("writeJavaObject");
+                stmt.executeUpdate();
+                System.out.println("writeJavaObject");
+           }
 
-            try { conn.close(); } catch (Exception e) {}
-            try { stmt.close(); } catch (Exception e) {}
+           else
+           { 
+                stmt = conn.prepareStatement("UPDATE Posts " + 
+                "SET title=?, body=?, modified=NOW() " +
+                "WHERE username=? AND postid=?");
+
+                stmt.setString(1, title);
+                stmt.setString(2, body);
+                stmt.setString(3, username);
+                stmt.setInt(4, postId);
+
+                stmt.executeUpdate();
+                System.out.println("UpdateJavaObject");
+           }
+           
+           try { conn.close(); } catch (Exception e) {}
+           try { stmt.close(); } catch (Exception e) {}
+           try { rs.close(); } catch (Exception e) {}
         }       
         catch (SQLException ex)
         {
@@ -112,7 +137,6 @@ public class PostService
             System.out.println(ex);
             return null;
         }   
-
     }   
     
     // Delete post associated with a username and a postid
