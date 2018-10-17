@@ -84,15 +84,15 @@ public class Editor extends HttpServlet {
 
         Map<String, String> queryPairs = splitQuery(queryString);
         String action = queryPairs.get("action");
-        
-        request.setAttribute("username", queryPairs.get("username"));
+        String username = queryPairs.get("username");
+        int postId = Integer.parseInt(queryPairs.get("postid"));
+   
+        request.setAttribute("username", username);
         
         switch(action)
         {
             case "open":
             {
-                String username = queryPairs.get("username");
-                int postId = Integer.parseInt(queryPairs.get("postid"));
                 request.setAttribute("title", "Open");
                 break;
             }      
@@ -100,8 +100,6 @@ public class Editor extends HttpServlet {
             {
                 request.setAttribute("title", "Save");
 
-                int postId = Integer.parseInt(queryPairs.get("postid"));
-                String username = queryPairs.get("username");
                 String title = queryPairs.get("title");
                 String body = queryPairs.get("body");
 
@@ -112,6 +110,14 @@ public class Editor extends HttpServlet {
             case "delete":
             {
                 request.setAttribute("title", "Delete");
+                PostService.deletePost(username, postId);                
+                
+                ArrayList posts = PostService.getPosts(username);
+                System.out.println("Size of array is " + posts.size()); 
+                
+                request.setAttribute("posts", posts);
+                request.getRequestDispatcher("/list.jsp").forward(request, response);
+
                 break;
             }
             case "preview":
@@ -122,9 +128,9 @@ public class Editor extends HttpServlet {
             case "list":
             {
                 request.setAttribute("title", "List");
-                String username = queryPairs.get("username");
                 ArrayList posts = PostService.getPosts(username);
                 System.out.println("Size of array is " + posts.size()); 
+                
                 request.setAttribute("posts", posts);
                 request.getRequestDispatcher("/list.jsp").forward(request, response);
                 break;
