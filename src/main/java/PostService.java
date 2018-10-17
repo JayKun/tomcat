@@ -3,6 +3,7 @@ package project2.service;
 import project2.model.Post;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class PostService
 {
@@ -65,7 +66,50 @@ public class PostService
         {
             System.out.println(ex);
             return;
-        }
-   
+        }   
+    }
+
+    // Get all the posts associated with a username
+    public static ArrayList<Post> getPosts(String username)
+    {
+        try
+        {   
+            Connection conn = null;
+            conn = getConnection();
+            PreparedStatement stmt = null; 
+            String sqlQuery = "SELECT * FROM Posts WHERE username = ? ";
+
+            stmt = conn.prepareStatement(sqlQuery);
+
+            stmt.setString(1, username);
+
+            ResultSet rs = stmt.executeQuery(sqlQuery);
+            System.out.println("ReadJavaObject");
+            
+            ArrayList results = new ArrayList();
+            
+            while(rs.next())
+            {
+                String title = rs.getString("title");
+                int postId = rs.getInt("postid");
+                String body = rs.getString("body");
+                Timestamp created = rs.getTimestamp("created");
+                Timestamp modified = rs.getTimestamp("modified");             
+                Post post = new Post(postId, username, title, body, created, modified);
+                results.add(post);
+            }
+
+            try { conn.close(); } catch (Exception e) {}
+            try { stmt.close(); } catch (Exception e) {}
+            try { rs.close(); } catch (Exception e) {}
+            
+            return results;
+        }       
+        catch (SQLException ex)
+        {
+            System.out.println(ex);
+            return null;
+        }   
+
     }   
 }

@@ -11,13 +11,15 @@ public class Post
     private Timestamp modified;
     private Timestamp created;
 
-    public Post(String username, String title, int id)
+    public Post(int postid, String username, String title, String body, Timestamp modified, Timestamp created)
     {
         super();
-        this.postId = id;
+        this.postId = postid;
         this.username = username;
         this.title = title;
-        this.body = "";
+        this.body = body;
+        this.modified = modified;
+        this.created = created;
     }
 
     public static int getPostId()
@@ -33,6 +35,11 @@ public class Post
     public String getBody()
     {
         return body;
+    }
+    
+    public String getUsername()
+    {
+        return username;
     }
 
     public String getModified()

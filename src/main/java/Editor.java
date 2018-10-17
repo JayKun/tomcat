@@ -120,6 +120,10 @@ public class Editor extends HttpServlet {
             case "list":
             {
                 request.setAttribute("title", "List");
+                String username = queryPairs.get("username");
+                ArrayList results = PostService.getPosts(username);   
+                request.setAttribute("results", results);
+                request.getRequestDispatcher("/list.jsp").forward(request, response);
                 break;
             }
             default:
