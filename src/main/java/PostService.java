@@ -114,4 +114,37 @@ public class PostService
         }   
 
     }   
+    
+    // Delete post associated with a username and a postid
+    public static void deletePost(String username, int postId)
+    {
+        try
+        {   
+            System.out.println("Username is: " + username);
+            Connection conn = null;
+            conn = getConnection();
+            PreparedStatement stmt = null; 
+            String sqlQuery = "DELETE FROM Posts WHERE username=? AND postid=?";
+
+            stmt = conn.prepareStatement(sqlQuery);
+
+            stmt.setString(1, username);
+            stmt.setString(2, postId);
+
+            ResultSet rs = stmt.executeQuery();
+            System.out.println("DeleteJavaObject");
+            
+            try { conn.close(); } catch (Exception e) {}
+            try { stmt.close(); } catch (Exception e) {}
+            try { rs.close(); } catch (Exception e) {}
+            
+            return;
+        }       
+        catch (SQLException ex)
+        {
+            System.out.println(ex);
+            return null;
+        }   
+
+    }   
 }
