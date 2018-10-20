@@ -4,14 +4,14 @@ import java.sql.*;
 
 public class Post
 {
-    private static int postId = 0;
+    private static int postId = 1;
     private String username;
     private String title;
     private String body;
     private Timestamp modified;
     private Timestamp created;
 
-    public Post(int postid, String username, String title, String body, Timestamp modified, Timestamp created)
+    public Post(int postid, String username, String title, String body, Timestamp created, Timestamp modified)
     {
         super();
         this.postId = postid;

@@ -83,6 +83,7 @@ public class Editor extends HttpServlet {
         String queryString = getQueryString(request);
 
         Map<String, String> queryPairs = splitQuery(queryString);
+
         String action = queryPairs.get("action");
         String username = queryPairs.get("username");
         int postId = Integer.parseInt(queryPairs.get("postid"));
@@ -99,12 +100,16 @@ public class Editor extends HttpServlet {
             case "save":
             {
                 request.setAttribute("title", "Save");
-
                 String title = queryPairs.get("title");
                 String body = queryPairs.get("body");
 
                 PostService.savePost(postId, username, title, body);
 
+                ArrayList posts = PostService.getPosts(username);
+                System.out.println("Size of array is " + posts.size()); 
+                
+                request.setAttribute("posts", posts);
+                request.getRequestDispatcher("/list.jsp").forward(request, response);
                 break;
             }
             case "delete":

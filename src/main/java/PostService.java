@@ -49,39 +49,65 @@ public class PostService
             
             stmt.setString(1, username);
             stmt.setInt(2, postId);           
-            ResultSet rs = stmt.executeQuery();
+            ResultSet rs = null;
            
-            if(!rs.next())
+            if(postId <= 0)
             {
+                // Check whether user exists
+                stmt = conn.prepareStatement("SELECT postid FROM UserId WHERE username=?");
+                stmt.setString(1, username);
+                rs = stmt.executeQuery();
+                
+                int nextPostId = 1;
+   
+                // If user exists
+                if(rs.next())
+                {
+                    nextPostId = rs.getInt("postid") + 1;
+                    stmt = conn.prepareStatement("UPDATE UserId SET postid=? WHERE username=?");
+                    stmt.setInt(1, nextPostId);
+                    stmt.setString(2, username);
+                    stmt.executeUpdate();
+                }
+                // else user does not exist
+                else
+                {
+                    stmt = conn.prepareStatement("INSERT INTO UserId(username, postid) VALUES(?, ?)");
+                    stmt.setString(1, username);
+                    stmt.setInt(2, 1);
+                    stmt.executeUpdate();
+                }
+
                 stmt = conn.prepareStatement(
                     "INSERT INTO Posts(postid, username, title, body, created, modified) " +
                     "VALUES(?, ?, ?, ?, NOW(), NOW())");
 
-                stmt.setInt(1, Post.getPostId());
+                stmt.setInt(1, nextPostId);
                 stmt.setString(2, username);
                 stmt.setString(3, title);
                 stmt.setString(4, body);
 
-                Post.incrementPostId();
-
                 stmt.executeUpdate();
                 System.out.println("writeJavaObject");
            }
-
-           else
+           else if(postId > 0)
            { 
-                stmt = conn.prepareStatement("UPDATE Posts " + 
-                "SET title=?, body=?, modified=NOW() " +
-                "WHERE username=? AND postid=?");
+                rs = stmt.executeQuery();
+                if(rs.next())
+                {
+                    stmt = conn.prepareStatement("UPDATE Posts " + 
+                    "SET title=?, body=?, modified=NOW() " +
+                    "WHERE username=? AND postid=?");
 
-                stmt.setString(1, title);
-                stmt.setString(2, body);
-                stmt.setString(3, username);
-                stmt.setInt(4, postId);
+                    stmt.setString(1, title);
+                    stmt.setString(2, body);
+                    stmt.setString(3, username);
+                    stmt.setInt(4, postId);
 
-                stmt.executeUpdate();
-                System.out.println("UpdateJavaObject");
-           }
+                    stmt.executeUpdate();
+                    System.out.println("UpdateJavaObject");
+               }
+          }
            
            try { conn.close(); } catch (Exception e) {}
            try { stmt.close(); } catch (Exception e) {}
