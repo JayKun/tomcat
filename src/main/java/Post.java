@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class Post
 {
-    private static int postId = 1;
+    private int postId;
     private String username;
     private String title;
     private String body;
@@ -22,7 +22,7 @@ public class Post
         this.created = created;
     }
 
-    public static int getPostId()
+    public int getPostId()
     {
         return postId;
     }
@@ -52,7 +52,7 @@ public class Post
         return created.toString();
     }
 
-    public static void incrementPostId()
+    public void incrementPostId()
     {
         postId++;
     }

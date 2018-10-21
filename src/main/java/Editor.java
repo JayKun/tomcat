@@ -152,10 +152,6 @@ public class Editor extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException 
     {
-        // String queryString = getQueryString(request);
-
-        // Map<String, String> queryPairs = splitQuery(queryString);
-
         String action = request.getParameter("action");
         String username = request.getParameter("username");
         int postId = Integer.parseInt(request.getParameter("postid"));
@@ -178,7 +174,6 @@ public class Editor extends HttpServlet {
                 request.setAttribute("title", "Save");
                 String title = request.getParameter("title");
                 String body = request.getParameter("body");
-                System.out.println("Body is " + body);
                 PostService.savePost(postId, username, title, body);
 
                 ArrayList posts = PostService.getPosts(username);
@@ -218,8 +213,7 @@ public class Editor extends HttpServlet {
             case "list":
             {
                 request.setAttribute("title", "List");
-                ArrayList posts = PostService.getPosts(username);
-                System.out.println("Size of array is " + posts.size()); 
+                ArrayList<Post> posts = PostService.getPosts(username);
                 
                 request.setAttribute("posts", posts);
                 request.getRequestDispatcher("/list.jsp").forward(request, response);
