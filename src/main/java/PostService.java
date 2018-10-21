@@ -124,7 +124,6 @@ public class PostService
     {
         try
         {   
-            System.out.println("Username is: " + username);
             Connection conn = null;
             conn = getConnection();
             PreparedStatement stmt = null; 
@@ -136,7 +135,6 @@ public class PostService
             stmt.setInt(2, postid);
 
             ResultSet rs = stmt.executeQuery();
-            System.out.println("ReadJavaObject");
             
             Post post = null;
             if(rs.next())

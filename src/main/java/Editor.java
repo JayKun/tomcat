@@ -63,6 +63,7 @@ public class Editor extends HttpServlet {
             !request.getParameterMap().containsKey("action"))
         {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
         }
 
         String username = request.getParameter("username");
@@ -79,11 +80,12 @@ public class Editor extends HttpServlet {
                     postId = Integer.parseInt(request.getParameter("postid")); 
                 }
                 request.setAttribute("postid", postId);
+
                 String title = request.getParameter("title");
                 String body = request.getParameter("body");
-                
                 request.setAttribute("title", title);
                 request.setAttribute("body", body);
+
                 break;
             }      
             case "preview":
@@ -99,25 +101,27 @@ public class Editor extends HttpServlet {
 
                 String markdowntitle = parseMarkdown(title);
                 String markdownbody = parseMarkdown(body);
+
                 request.setAttribute("markdowntitle", markdowntitle);
                 request.setAttribute("markdownbody", markdownbody);
 
 		request.getRequestDispatcher("/preview.jsp").forward(request, response);
-                break;
+                return;
             }
             case "list":
             {
                 request.setAttribute("title", "List");
                 ArrayList posts = PostService.getPosts(username);
-                
+                 
                 request.setAttribute("posts", posts);
                 request.getRequestDispatcher("/list.jsp").forward(request, response);
-                break;
+                return;
             }
             default:
             {
                 System.out.println("Action not recognized");
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
         }
 
@@ -156,21 +160,56 @@ public class Editor extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException 
     {
+        if (!request.getParameterMap().containsKey("username") || 
+            !request.getParameterMap().containsKey("action"))
+        {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
         String action = request.getParameter("action");
+        
         String username = request.getParameter("username");
-        int postId = Integer.parseInt(request.getParameter("postid"));
-   
         request.setAttribute("username", username);
-        request.setAttribute("postid", postId);       
+        
+        int postId = 0;
+        if(request.getParameterMap().containsKey("postid"))
+        {
+            postId = Integer.parseInt(request.getParameter("postid")); 
+        }
+        request.setAttribute("postid", postId);
  
         switch(action)
         {
             case "open":
             {
-                String title = request.getParameter("title");
-                String body = request.getParameter("body");
-                request.setAttribute("title", title);
-                request.setAttribute("body", body);
+                if(request.getParameterMap().containsKey("title") &&
+                  request.getParameterMap().containsKey("body"))
+                {
+                    String title = request.getParameter("title");
+                    String body = request.getParameter("body");
+                    request.setAttribute("title", title);
+                    request.setAttribute("body", body);
+                }
+                else
+                {
+                    Post post = PostService.getPost(username, postId);
+                    if(post == null && postId > 0)
+                    {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
+                    else if (post != null)
+                    {   
+                        request.setAttribute("title", post.getTitle());
+                        request.setAttribute("body", post.getBody());
+                    }
+                    else
+                    {
+                        request.setAttribute("title", "");
+                        request.setAttribute("body", "");
+                    }
+                }
                 break;
             }      
             case "save":
@@ -180,7 +219,7 @@ public class Editor extends HttpServlet {
                 String body = request.getParameter("body");
                 PostService.savePost(postId, username, title, body);
 
-                ArrayList posts = PostService.getPosts(username);
+                ArrayList<Post> posts = PostService.getPosts(username);
                 
                 request.setAttribute("posts", posts);
                 request.getRequestDispatcher("/list.jsp").forward(request, response);
