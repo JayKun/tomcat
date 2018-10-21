@@ -20,9 +20,9 @@
         </div>
         <div class="jumbotron">
                 <label for="title">Title</label>
-                <input name="title" type="text" id="title" value="${post.getTitle()}" class="form-control">
+                <input name="title" type="text" id="title" value="${title}" class="form-control">
                 <label for="body">Body</label>
-                <textarea name="body" style="height: 20rem;" id="body" class="form-control"/><c:out value="${post.getBody()}"/></textarea>
+                <textarea name="body" style="height: 15rem;" id="body" class="form-control"/><c:out value="${body}"/></textarea>
         </div>
             <input name="username" type="hidden" value=<%=request.getAttribute("username")%> class="form-control" />
             <input name="postid" type="hidden" value=<%=request.getAttribute("postid")%> class="form-control" />

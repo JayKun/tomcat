@@ -75,18 +75,11 @@ public class Editor extends HttpServlet {
                 int postId = Integer.parseInt(request.getParameter("postid")); 
                 request.setAttribute("postid", postId);
                 
-                Post result = null;
-                if(postId > 0)
-                {
-                    result = PostService.getPost(username, postId);
-                }
-                else
-                {
-                    String title = request.getParameter("title");
-                    String body = request.getParameter("body");
-                    result = new Post(postId, username, title, body, null, null);
-                }
-                request.setAttribute("post", result);
+                String title = request.getParameter("title");
+                String body = request.getParameter("body");
+                
+                request.setAttribute("title", title);
+                request.setAttribute("body", body);
                 break;
             }      
             case "preview":
@@ -174,13 +167,10 @@ public class Editor extends HttpServlet {
         {
             case "open":
             {
-                request.setAttribute("title", "Open");
-                Post result = PostService.getPost(username, postId);
-                if(result == null)
-                {
-                                  
-                }
-                request.setAttribute("post", result);
+                String title = request.getParameter("title");
+                String body = request.getParameter("body");
+                request.setAttribute("title", title);
+                request.setAttribute("body", body);
                 break;
             }      
             case "save":
