@@ -74,8 +74,18 @@ public class Editor extends HttpServlet {
             {
                 int postId = Integer.parseInt(request.getParameter("postid")); 
                 request.setAttribute("postid", postId);
-                request.setAttribute("title", "Open");
-                Post result = PostService.getPost(username, postId);
+                
+                Post result = null;
+                if(postId > 0)
+                {
+                    result = PostService.getPost(username, postId);
+                }
+                else
+                {
+                    String title = request.getParameter("title");
+                    String body = request.getParameter("body");
+                    result = new Post(postId, username, title, body, null, null);
+                }
                 request.setAttribute("post", result);
                 break;
             }      
@@ -166,6 +176,10 @@ public class Editor extends HttpServlet {
             {
                 request.setAttribute("title", "Open");
                 Post result = PostService.getPost(username, postId);
+                if(result == null)
+                {
+                                  
+                }
                 request.setAttribute("post", result);
                 break;
             }      
