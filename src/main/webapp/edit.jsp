@@ -7,10 +7,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <title>Edit Post</title>
+    <style>
+    nav h1
+    {
+        color: #bdc3cc;
+    }
+    body
+    {
+        background-color: #33363a;
+    }
+    </style>
 </head>
 <body>
     <div class="container">
-    <div class="display-4"><h1>Edit Post</h1></div>
+    <nav class="nav justify-content-center"><h1>Edit Post</h1></nav>
     <form action="post" method="POST" class="form-group">
         <div>
             <button name="action" type="submit" value="save" class="btn btn-info">Save</button>
@@ -20,9 +30,10 @@
         </div>
         <div class="jumbotron">
                 <label for="title">Title</label>
-                <input name="title" type="text" id="title" value="${title}" class="form-control">
+                <input name="title" type="text" id="title" value="${title}" class="form-control" placeholder="Title here...">
+                <br>
                 <label for="body">Body</label>
-                <textarea name="body" style="height: 15rem;" id="body" class="form-control"/><c:out value="${body}"/></textarea>
+                <textarea name="body" style="height: 15rem;" id="body" class="form-control" placeholder="Content body here..."/><c:out value="${body}"/></textarea>
         </div>
             <input name="username" type="hidden" value=<%=request.getAttribute("username")%> class="form-control" />
             <input name="postid" type="hidden" value=<%=request.getAttribute("postid")%> class="form-control" />

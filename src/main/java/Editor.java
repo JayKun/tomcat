@@ -41,6 +41,18 @@ public class Editor extends HttpServlet {
     *    Parse and render to HTML
     *
     */
+    public static boolean isNumeric(String strNum)
+    {
+    try
+    {
+        double d = Double.parseDouble(strNum);
+    } 
+    catch (NumberFormatException | NullPointerException nfe)
+    {
+        return false;
+    }
+    return true;
+}
     public String parseMarkdown(String markdown)
     {
         Parser parser = Parser.builder().build();
@@ -74,22 +86,51 @@ public class Editor extends HttpServlet {
         {
             case "open":
             {
-                int postId = 0;
-                if(request.getParameterMap().containsKey("postid"))
+                if(!request.getParameterMap().containsKey("postid")
+                  || !isNumeric(request.getParameter("postid")))
                 {
-                    postId = Integer.parseInt(request.getParameter("postid")); 
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
                 }
+                int postId = Integer.parseInt(request.getParameter("postid")); 
                 request.setAttribute("postid", postId);
 
-                String title = request.getParameter("title");
-                String body = request.getParameter("body");
-                request.setAttribute("title", title);
-                request.setAttribute("body", body);
-
+                if(request.getParameterMap().containsKey("title") &&
+                  request.getParameterMap().containsKey("body"))
+                {
+                    String title = request.getParameter("title");
+                    String body = request.getParameter("body");
+                    request.setAttribute("title", title);
+                    request.setAttribute("body", body);
+                }
+                else
+                {
+                    Post post = PostService.getPost(username, postId);
+                    // Row does not exist in database
+                    if(post == null)
+                    {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                        return;
+                    }
+                    // Row exists
+                    else
+                    {   
+                        request.setAttribute("title", post.getTitle());
+                        request.setAttribute("body", post.getBody());
+                    }
+                }
                 break;
             }      
             case "preview":
             {
+                if(!request.getParameterMap().containsKey("postid")
+                  || !isNumeric(request.getParameter("postid"))
+                  || !request.getParameterMap().containsKey("title")
+                  || !request.getParameterMap().containsKey("body"))
+                {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
                 int postId = Integer.parseInt(request.getParameter("postid")); 
                 request.setAttribute("postid", postId);
 
@@ -172,17 +213,19 @@ public class Editor extends HttpServlet {
         String username = request.getParameter("username");
         request.setAttribute("username", username);
         
-        int postId = 0;
-        if(request.getParameterMap().containsKey("postid"))
-        {
-            postId = Integer.parseInt(request.getParameter("postid")); 
-        }
-        request.setAttribute("postid", postId);
- 
         switch(action)
         {
             case "open":
             {
+                if(!request.getParameterMap().containsKey("postid")
+                  || !isNumeric(request.getParameter("postid")))
+                {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+                int postId = Integer.parseInt(request.getParameter("postid")); 
+                request.setAttribute("postid", postId);
+
                 if(request.getParameterMap().containsKey("title") &&
                   request.getParameterMap().containsKey("body"))
                 {
@@ -192,28 +235,32 @@ public class Editor extends HttpServlet {
                     request.setAttribute("body", body);
                 }
                 else
-                {
+                { 
                     Post post = PostService.getPost(username, postId);
-                    if(post == null && postId > 0)
+                    if(post == null)
                     {
                         response.sendError(HttpServletResponse.SC_NOT_FOUND);
                         return;
                     }
-                    else if (post != null)
+                    else
                     {   
                         request.setAttribute("title", post.getTitle());
                         request.setAttribute("body", post.getBody());
-                    }
-                    else
-                    {
-                        request.setAttribute("title", "");
-                        request.setAttribute("body", "");
                     }
                 }
                 break;
             }      
             case "save":
             {
+                if(!request.getParameterMap().containsKey("postid")
+                  || !isNumeric(request.getParameter("postid")))
+                {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+
+                int postId = Integer.parseInt(request.getParameter("postid")); 
+                request.setAttribute("postid", postId);
                 request.setAttribute("title", "Save");
                 String title = request.getParameter("title");
                 String body = request.getParameter("body");
@@ -227,6 +274,15 @@ public class Editor extends HttpServlet {
             }
             case "delete":
             {
+                if(!request.getParameterMap().containsKey("postid")
+                || !isNumeric(request.getParameter("postid")))
+                {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+                int postId = Integer.parseInt(request.getParameter("postid")); 
+                
+                request.setAttribute("postid", postId);
                 request.setAttribute("title", "Delete");
                 PostService.deletePost(username, postId);                
                 
@@ -239,6 +295,15 @@ public class Editor extends HttpServlet {
             }
             case "preview":
             {
+                if(!request.getParameterMap().containsKey("postid")
+                || !isNumeric(request.getParameter("postid")))
+                {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+                int postId = Integer.parseInt(request.getParameter("postid")); 
+                
+                request.setAttribute("postid", postId);
                 String title = request.getParameter("title");
                 String body = request.getParameter("body");
                 request.setAttribute("title", title);
@@ -265,6 +330,8 @@ public class Editor extends HttpServlet {
             default:
             {
                 System.out.println("Action not recognized");
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
             }
         }
 

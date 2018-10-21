@@ -7,18 +7,32 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <title>Post List</title>
+    <style>
+    nav h1
+    {
+        color: #bdc3cc;
+    }
+    body
+    {
+        background-color: #33363a; 
+    }
+    </style>
 </head>
 <body>
+    <br>
     <div class="container">
     <form action="post" method="POST">
         <input name="username" value=<%= request.getAttribute("username") %> type="hidden">
         <input name="postid" value="0" type="hidden">
+        <input name="title" value="" type="hidden">
+        <input name="body" value="" type="hidden">
         <button type="submit" name="action" value="open" class="btn btn-info">New Post</button>
     </form>
     </div>
-    <div class="container">
-        <h1>Post List</h1>
-        <table class="table">
+    
+    <nav class="nav justify-content-center"><h1>Post List</h1></nav>
+    <div class="container jumbotron">
+        <table class="table table-striped">
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Title</th>
@@ -29,7 +43,7 @@
         </thead>
         <tbody>
         <c:forEach items="${posts}" var="post">
-        <tr>
+        <tr scope="row">
         <form action="post" method="POST">
         <input name="username" value=<%= request.getAttribute("username")%> type="hidden">
         <input name="postid" value="${post.getPostId()}" type="hidden">
@@ -40,7 +54,7 @@
         <td><c:out value="${post.getModified()}"/></td>
         <td>
             <button type="submit" name="action" value="open" class="btn btn-primary">Open</button>
-            <button type="submit" name="action" value="delete" class="btn btn-delete">Delete</button>
+            <button type="submit" name="action" value="delete" class="btn btn-danger">Delete</button>
         </td>
         </form>
         </tr>
