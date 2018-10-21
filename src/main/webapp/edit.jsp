@@ -16,14 +16,14 @@
         </div>
         <div>
             <label for="title">Title</label>
-            <input name="title" type="text" id="text">
+            <input name="title" type="text" id="text" value="${post.getTitle()}">
         </div>
         <div>
             <label for="body">Body</label>
-            <textarea name="body" style="height: 20rem;" id="body"></textarea>
+            <textarea name="body" style="height: 20rem;" id="body"><c:out value="${post.getBody()}"/></textarea>
         </div>
-            <input name="username" type="hidden" value="jun">
-            <input name="postid" type="hidden" value="-1">
+            <input name="username" type="hidden" value=<%=request.getAttribute("username")%> >
+            <input name="postid" type="hidden" value=<%=request.getAttribute("postid")%> >
     </form>
 </body>
 </html>

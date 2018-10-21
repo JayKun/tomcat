@@ -44,8 +44,7 @@ public class PostService
             Connection conn = null;
             conn = getConnection();
             PreparedStatement stmt = null; 
-            stmt = conn.prepareStatement(
-                "SELECT * FROM Posts WHERE username=? AND postid=?");
+            stmt = conn.prepareStatement("SELECT * FROM Posts WHERE username=? AND postid=?");
             
             stmt.setString(1, username);
             stmt.setInt(2, postId);           
@@ -88,7 +87,7 @@ public class PostService
                 stmt.setString(4, body);
 
                 stmt.executeUpdate();
-                System.out.println("writeJavaObject");
+                System.out.println("Saving new entry");
            }
            else if(postId > 0)
            { 
@@ -105,7 +104,7 @@ public class PostService
                     stmt.setInt(4, postId);
 
                     stmt.executeUpdate();
-                    System.out.println("UpdateJavaObject");
+                    System.out.println("Update Entry");
                }
           }
            
@@ -120,6 +119,49 @@ public class PostService
         }   
     }
 
+    // Get a post associated with a username and a postid
+    public static Post getPost(String username, int postid)
+    {
+        try
+        {   
+            System.out.println("Username is: " + username);
+            Connection conn = null;
+            conn = getConnection();
+            PreparedStatement stmt = null; 
+            String sqlQuery = "SELECT * FROM Posts WHERE username=? AND postid=?";
+
+            stmt = conn.prepareStatement(sqlQuery);
+
+            stmt.setString(1, username);
+            stmt.setInt(2, postid);
+
+            ResultSet rs = stmt.executeQuery();
+            System.out.println("ReadJavaObject");
+            
+            Post post = null;
+            if(rs.next())
+            {
+                String title = rs.getString("title");
+                int postId = rs.getInt("postid");
+                String body = rs.getString("body");
+                Timestamp created = rs.getTimestamp("created");
+                Timestamp modified = rs.getTimestamp("modified");             
+                post = new Post(postId, username, title, body, created, modified);
+            }
+
+            try { conn.close(); } catch (Exception e) {}
+            try { stmt.close(); } catch (Exception e) {}
+            try { rs.close(); } catch (Exception e) {}
+            
+            return post;
+        }       
+        catch (SQLException ex)
+        {
+            System.out.println(ex);
+            return null;
+        }   
+    }   
+    
     // Get all the posts associated with a username
     public static ArrayList<Post> getPosts(String username)
     {
